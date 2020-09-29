@@ -1,12 +1,15 @@
 <template>
    <v-app>
     <v-main>
-      <v-tabs v-model="e1" background-color="primary" centered fixed-tabs dark>
+      <v-snackbar v-model="done">
+        {{ messageResponse }}
+      </v-snackbar>
+      <v-tabs v-if="!done" v-model="e1" background-color="primary" centered fixed-tabs dark>
         <v-tab> Review </v-tab>
         <v-tab :disabled="isDatesNull"> Confirm </v-tab>
       </v-tabs>
 
-      <v-tabs-items v-model="e1">
+      <v-tabs-items v-if="!done" v-model="e1">
         <v-tab-item>
           <v-container>
             <v-row v-if="!home">
@@ -31,7 +34,7 @@
               </v-col>
 
               <v-col xs="12" sm="12" md="5">
-                
+                <Calculate :confirmMode="false" :home="home" />
               </v-col>
             </v-row>
           </v-container>
@@ -42,6 +45,7 @@
             <v-row v-if="home">
               <v-col xs="12" sm="12" md="7">
                 <Review
+                  v-on:done-process="setDoneProcess"
                   v-on:go-confirm="goToConfirm"
                   :confirmMode="true"
                   :home="home"
@@ -49,7 +53,7 @@
               </v-col>
 
               <v-col xs="12" sm="12" md="5">
-                
+                <Calculate :confirmMode="true" :home="home" />
               </v-col>
             </v-row>
           </v-container>
@@ -61,7 +65,7 @@
 
 <script>
 import Review from './components/Review'
-
+import Calculate from './components/Calculate'
 export default {
   name: 'App',
   async mounted() {
@@ -69,12 +73,19 @@ export default {
   },
   components: {
     Review,
+    Calculate
   },
 
   data: () => ({
     e1: 0,
+    done: false,
+    messageResponse: ''
   }),
   methods: {
+    setDoneProcess (message) {
+      this.done = true
+      this.messageResponse = message
+    },
     goToConfirm() {
       this.e1 = 1;
     },
