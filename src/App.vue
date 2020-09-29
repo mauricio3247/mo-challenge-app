@@ -1,60 +1,94 @@
 <template>
-  <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
-
+   <v-app>
     <v-main>
-      <HelloWorld/>
+      <v-tabs v-model="e1" background-color="primary" centered fixed-tabs dark>
+        <v-tab> Review </v-tab>
+        <v-tab :disabled="isDatesNull"> Confirm </v-tab>
+      </v-tabs>
+
+      <v-tabs-items v-model="e1">
+        <v-tab-item>
+          <v-container>
+            <v-row v-if="!home">
+              <v-col class="d-flex justify-center">
+                  <v-progress-circular
+                    class="mt-10"
+                    :size="70"
+                    :width="7"
+                    color="primary"
+                    indeterminate
+                  ></v-progress-circular>
+              </v-col>
+
+            </v-row>
+            <v-row v-if="home" >
+              <v-col xs="12" sm="12" md="7" >
+                <Review
+                  v-on:go-confirm="goToConfirm"
+                  :confirmMode="false"
+                  :home="home"
+                />
+              </v-col>
+
+              <v-col xs="12" sm="12" md="5">
+                
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-tab-item>
+
+        <v-tab-item>
+          <v-container>
+            <v-row v-if="home">
+              <v-col xs="12" sm="12" md="7">
+                <Review
+                  v-on:go-confirm="goToConfirm"
+                  :confirmMode="true"
+                  :home="home"
+                />
+              </v-col>
+
+              <v-col xs="12" sm="12" md="5">
+                
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-tab-item>
+      </v-tabs-items>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import Review from './components/Review'
 
 export default {
   name: 'App',
-
+  async mounted() {
+    this.$store.dispatch("load");
+  },
   components: {
-    HelloWorld,
+    Review,
   },
 
   data: () => ({
-    //
+    e1: 0,
   }),
+  methods: {
+    goToConfirm() {
+      this.e1 = 1;
+    },
+  },
+  computed: {
+    home() {
+      return this.$store.getters["getHome"];
+    },
+    isConfirmMode() {
+      return this.e1 !== 0;
+    },
+    isDatesNull() {
+      return this.$store.getters["getDates"] === null;
+    },
+  },
 };
 </script>
