@@ -1,7 +1,7 @@
 <template>
    <v-app>
     <v-main>
-      <v-snackbar v-model="done">
+      <v-snackbar color="success" top v-model="snackMessage">
         {{ messageResponse }}
       </v-snackbar>
       <v-tabs v-if="!done" v-model="e1" background-color="primary" centered fixed-tabs dark>
@@ -79,11 +79,13 @@ export default {
   data: () => ({
     e1: 0,
     done: false,
+    snackMessage: false,
     messageResponse: ''
   }),
   methods: {
     setDoneProcess (message) {
       this.done = true
+      this.snackMessage = true
       this.messageResponse = message
     },
     goToConfirm() {

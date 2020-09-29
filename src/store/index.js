@@ -141,7 +141,11 @@ export default new Vuex.Store({
           }
         );
         const data = await response.json();
-        return data.message;
+        if (data.success === false) {
+          throw new Error(data.data.message);
+        } else {
+          return data.message;
+        }
       } catch (error) {
         console.log(error);
         commit("SET_MESSAGE_ERROR", "Error to send data");
